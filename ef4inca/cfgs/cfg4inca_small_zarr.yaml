@@ -1,0 +1,112 @@
+dataset:
+  dataset_name: "inca"
+  backend: "zarr"                       # NEW: Switch loader to Zarr
+  train_path: "/content/data/dataset_train.zarr"
+  val_path:   "/content/data/dataset_val.zarr"
+  test_path:  "/content/data/dataset_test.zarr"
+
+  img_height: 40                        # Reduced from 400 for Colab small dataset
+  img_width: 70                         # Reduced from 700
+  in_len: 25
+  out_len: 24
+  seq_len: 49
+  plot_stride: 2
+  interval_real_time: 5
+  sample_mode: "sequent"
+  stride: 24
+  layout: "NTHWC"
+  NUM_WORKERS: 2                        # Colab friendly
+  BATCH_SIZE: 1                         # Colab friendly
+
+layout:
+  in_len: 25
+  out_len: 24
+  layout: "NTHWC"
+
+optim:
+  total_batch_size: 4                   # Adjusted for small data
+  micro_batch_size: 1
+  seed: 0
+  max_epochs: 5                         # Short run for Colab
+  method: "adamw"
+  lr: 1.0e-3
+  wd: 1.0e-5
+  gradient_clip_val: 1.0
+  warmup_percentage: 0.2
+  lr_scheduler_mode: "cosine"
+  min_lr_ratio: 0.1
+  warmup_min_lr_ratio: 0.1
+  early_stop: false
+  save_top_k: 1
+
+trainer:
+  check_val_every_n_epoch: 1
+  log_step_ratio: 0.01
+  precision: "16-mixed"
+
+logging:
+  logging_prefix: "EF4INCA_colab_small"
+  monitor_lr: true
+  monitor_device: false
+  use_wandb: false
+
+vis:
+  train_example_data_idx_list: [0]
+  val_example_data_idx_list: [0]
+  test_example_data_idx_list: [0]
+  eval_example_only: false
+  plot_stride: 2
+
+model:
+  input_shape: [25, 40, 70, 7]          # Change to 8 if your Zarr has aux band included
+  target_shape: [24, 40, 70, 1]
+  base_units: 32
+  block_units: null
+  scale_alpha: 1.0
+
+  enc_depth: [1, 1]
+  dec_depth: [1, 1]
+
+  enc_use_inter_ffn: true
+  dec_use_inter_ffn: true
+  dec_hierarchical_pos_embed: true
+  downsample: 2
+  downsample_type: "patch_merge"
+  upsample_type: "upsample"
+  num_global_vectors: 8
+  use_dec_self_global: true
+  dec_self_update_global: true
+  use_dec_cross_global: true
+  use_global_vector_ffn: true
+  use_global_self_attn: false
+  separate_global_qkv: false
+  global_dim_ratio: 1
+  self_pattern: "axial"
+  cross_self_pattern: "axial"
+  cross_pattern: "cross_1x1"
+  dec_cross_last_n_frames: null
+  attn_drop: 0.1
+  proj_drop: 0.1
+  ffn_drop: 0.1
+  num_heads: 4
+  ffn_activation: "gelu"
+  gated_ffn: false
+  norm_layer: "layer_norm"
+  padding_type: "zeros"
+  pos_embed_type: "t+hw"
+  use_relative_pos: true
+  self_attn_use_final_proj: true
+  dec_use_first_self_attn: false
+  z_init_method: "zeros"
+  checkpoint_level: 2
+  initial_downsample_type: "stack_conv"
+  initial_downsample_activation: "leaky"
+  initial_downsample_stack_conv_num_layers: 3
+  initial_downsample_stack_conv_dim_list: [4, 16, 32]
+  initial_downsample_stack_conv_downscale_list: [3, 2, 2]
+  initial_downsample_stack_conv_num_conv_list: [2, 2, 2]
+  attn_linear_init_mode: "0"
+  ffn_linear_init_mode: "0"
+  conv_init_mode: "0"
+  down_up_linear_init_mode: "0"
+  norm_init_mode: "0"
