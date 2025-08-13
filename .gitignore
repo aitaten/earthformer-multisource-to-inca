@@ -5,7 +5,7 @@ experiments
 *DUMP*
 *.ipynb
 steps_output
-.nfs
+.nfs*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
