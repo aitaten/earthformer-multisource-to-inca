@@ -201,7 +201,8 @@ class CuboidEF4INCAPLModule(pl.LightningModule):
 
         ## ADDITION FOR INVERSE LINEAR WEIGHTING OF LOSS FUNCTION! 
         self.wgt = self.invLinWeight(self.out_len)
-        self.runFSS = oc.logging.computeFSS
+        # self.runFSS = oc.logging.computeFSS
+        self.runFSS = getattr(oc.logging, "computeFSS", False)
         self.scale_list = oc.dataset.scale_list 
 
     def invLinWeight(self, t):
