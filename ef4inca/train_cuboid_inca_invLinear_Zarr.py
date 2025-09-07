@@ -44,7 +44,10 @@ from utils.fss_kucuk import compute_fss
 from utils.fixedValues import NORM_DICT_TOTAL as normDict
 from utils.fixedValues import bestSamples, worstSamples, randSamples
 
-from utils.dataUtils_flex import kucukINCAdataModule
+#old module
+# from utils.dataUtils_flex import kucukINCAdataModule
+#new dataloader
+from data_zarr_colab import ZarrINCADataModule
 
 
 #### Set some directories/variables
@@ -249,8 +252,8 @@ class CuboidEF4INCAPLModule(pl.LightningModule):
     def get_dataset_config():
         oc = OmegaConf.create()
         oc.dataset_name = "inca"
-        oc.img_height = 400
-        oc.img_width = 700
+        oc.img_height = 40
+        oc.img_width = 70
         oc.in_len = 25
         oc.out_len = 24
         oc.seq_len = 49
@@ -518,7 +521,7 @@ class CuboidEF4INCAPLModule(pl.LightningModule):
           - for HDF5:  backend='h5' plus .h5 files in .../data/train|val|test
           - for Zarr:  backend='zarr' and train_path/val_path/test_path set to .zarr roots
         """
-        backend = dataset_oc.get('backend', 'h5')
+        backend = dataset_oc.get('backend', 'zarr')
         if backend == 'zarr':
             from utils.data_zarr_colab import ZarrINCADataModule
             dm = ZarrINCADataModule(dataset_oc)
