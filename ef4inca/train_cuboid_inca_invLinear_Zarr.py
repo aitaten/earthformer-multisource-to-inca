@@ -47,7 +47,7 @@ from utils.fixedValues import bestSamples, worstSamples, randSamples
 #old module
 # from utils.dataUtils_flex import kucukINCAdataModule
 #new dataloader
-from data_zarr_colab import ZarrINCADataModule
+from utils.data_zarr_colab import ZarrINCADataModule
 
 
 #### Set some directories/variables
