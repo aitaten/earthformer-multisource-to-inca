@@ -253,7 +253,7 @@ class CuboidEF4INCAPLModule(pl.LightningModule):
         oc = OmegaConf.create()
         oc.dataset_name = "inca"
         oc.img_height = 40
-        oc.img_width = 70
+        oc.img_width = 72
         oc.in_len = 25
         oc.out_len = 24
         oc.seq_len = 49
