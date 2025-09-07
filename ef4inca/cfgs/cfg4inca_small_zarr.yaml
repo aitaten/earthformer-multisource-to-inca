@@ -5,7 +5,7 @@ dataset:
   val_path:   "/content/data/dataset_val.zarr"
   test_path:  "/content/data/dataset_test.zarr"
 
-  img_height: 40                        # Reduced from 400 for Colab small dataset
+  img_height: 48                        # Reduced from 400 for Colab small dataset
   img_width: 72                         # Reduced from 700
   in_len: 25
   out_len: 24
@@ -64,8 +64,8 @@ vis:
   plot_stride: 2
 
 model:
-  input_shape: [25, 40, 72, 7]          # Change to 8 if your Zarr has aux band included
-  target_shape: [24, 40, 72, 1]
+  input_shape: [25, 48, 72, 7]          # Change to 8 if your Zarr has aux band included
+  target_shape: [24, 48, 72, 1]
   base_units: 32
   block_units: null
   scale_alpha: 1.0

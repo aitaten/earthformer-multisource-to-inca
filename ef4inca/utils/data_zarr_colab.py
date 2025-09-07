@@ -5,6 +5,22 @@ from torch.utils.data import Dataset, DataLoader
 import pytorch_lightning as pl
 import torch.nn.functional as F
 
+def _to_float32(x):
+    return torch.from_numpy(x.astype('float32'))
+
+def _pad_to_multiple_lastHW(x_torch: torch.Tensor, mult_h=12, mult_w=12):
+    """
+    x_torch: (T, H, W, C)
+    Pads H and W (right/bottom) so they become multiples of mult_h/mult_w.
+    """
+    T, H, W, C = x_torch.shape
+    pad_h = (mult_h - (H % mult_h)) % mult_h
+    pad_w = (mult_w - (W % mult_w)) % mult_w
+    if pad_h == 0 and pad_w == 0:
+        return x_torch
+    # pad tuple is (C_left, C_right, W_left, W_right, H_left, H_right) for last 3 dims
+    return F.pad(x_torch, (0, 0, 0, pad_w, 0, pad_h))
+    
 class ZarrINCADataset(Dataset):
     def __init__(self, zarr_path):
         self.store = zarr.open(zarr_path, mode='r')
@@ -15,24 +31,22 @@ class ZarrINCADataset(Dataset):
     def __len__(self):
         return self.N
     def __getitem__(self, idx):
-        x = self.past[idx]   # (in_len, H, W, C)
-        y = self.future[idx] # (out_len, H, W, 1)
+        x = _to_float32(self.past[idx])     # (T_in, H, W, C)
+        y = _to_float32(self.future[idx])   # (T_out, H, W, 1)
 
-        # Convert to torch
-        x = torch.from_numpy(x.astype('float32'))
-        y = torch.from_numpy(y.astype('float32'))
+        # >>> Critical: pad BOTH H and W to multiples of 12
+        x = _pad_to_multiple_lastHW(x, mult_h=12, mult_w=12)
+        y = _pad_to_multiple_lastHW(y, mult_h=12, mult_w=12)
 
-        # Pad width from 70 -> 72 (last spatial dimension = W)
-        # Padding format in F.pad: (pad_last_dim_left, pad_last_dim_right, pad_2nd_last_dim_left, pad_2nd_last_dim_right, ...)
-        x = F.pad(x, (0, 0, 0, 2))  # pad 2 on width (W)
-        y = F.pad(y, (0, 0, 0, 2))  # same for target
+        name = "" if self.names is None else str(self.names[idx])
+        return {"sample_past": x, "sample_future": y, "name": name}
 
-        sample = {
-            "sample_past": x,
-            "sample_future": y,
-            "name": "" if self.names is None else str(self.names[idx])
-        }
-        return sample
+        # sample = {
+        #     "sample_past": x,
+        #     "sample_future": y,
+        #     "name": "" if self.names is None else str(self.names[idx])
+        # }
+        # return sample
 
 class ZarrINCADataModule(pl.LightningDataModule):
     def __init__(self, params):
