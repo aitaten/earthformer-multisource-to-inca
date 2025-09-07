@@ -16,9 +16,19 @@ class ZarrINCADataset(Dataset):
     def __getitem__(self, idx):
         x = self.past[idx]   # (in_len, H, W, C)
         y = self.future[idx] # (out_len, H, W, 1)
+
+        # Convert to torch
+        x = torch.from_numpy(x.astype('float32'))
+        y = torch.from_numpy(y.astype('float32'))
+
+        # Pad width from 70 -> 72 (last spatial dimension = W)
+        # Padding format in F.pad: (pad_last_dim_left, pad_last_dim_right, pad_2nd_last_dim_left, pad_2nd_last_dim_right, ...)
+        x = F.pad(x, (0, 0, 0, 2))  # pad 2 on width (W)
+        y = F.pad(y, (0, 0, 0, 2))  # same for target
+
         sample = {
-            "sample_past": torch.from_numpy(x.astype('float32')),
-            "sample_future": torch.from_numpy(y.astype('float32')),
+            "sample_past": x,
+            "sample_future": y,
             "name": "" if self.names is None else str(self.names[idx])
         }
         return sample
