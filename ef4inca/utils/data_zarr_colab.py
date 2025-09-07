@@ -2,6 +2,7 @@ import os
 import zarr
 import torch
 from torch.utils.data import Dataset, DataLoader
+import pytorch_lightning as pl
 
 class ZarrINCADataset(Dataset):
     def __init__(self, zarr_path):
@@ -22,8 +23,9 @@ class ZarrINCADataset(Dataset):
         }
         return sample
 
-class ZarrINCADataModule:
+class ZarrINCADataModule(pl.LightningDataModule):
     def __init__(self, params):
+        super().__init__()
         # expects keys: train_path, val_path, test_path, BATCH_SIZE, NUM_WORKERS
         self.params = params
         self.train_path = params.get('train_path')
