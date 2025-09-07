@@ -18,6 +18,12 @@ dataset:
   NUM_WORKERS: 2                        # Colab friendly
   BATCH_SIZE: 1                         # Colab friendly
 
+  # --- REQUIRED FOR METRICS ---
+  metrics_mode: "0"
+  metrics_list: ['csi', 'pod', 'sucr', 'bias']
+  threshold_list: [0.6, 1.7, 2.7, 5, 8.6, 15]
+  scale_list: [3, 5, 7, 9, 11]
+
 layout:
   in_len: 25
   out_len: 24
