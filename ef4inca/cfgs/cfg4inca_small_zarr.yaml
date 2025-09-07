@@ -76,7 +76,7 @@ model:
   enc_use_inter_ffn: true
   dec_use_inter_ffn: true
   dec_hierarchical_pos_embed: true
-  downsample: 2
+  downsample: 1
   downsample_type: "patch_merge"
   upsample_type: "upsample"
   num_global_vectors: 8
