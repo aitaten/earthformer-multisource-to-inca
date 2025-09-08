@@ -106,7 +106,7 @@ def pl_ckpt_to_pytorch_state_dict(
     pytorch_state_dict: OrderedDict
     """
     if map_location is not None:
-        checkpoint = pl_load(checkpoint_path, map_location=map_location)
+        checkpoint = pl_load(checkpoint_path, map_location=map_location, weights_only=False)
     else:
         checkpoint = pl_load(checkpoint_path, map_location=lambda storage, loc: storage)
     pl_ckpt_state_dict = checkpoint["state_dict"]
